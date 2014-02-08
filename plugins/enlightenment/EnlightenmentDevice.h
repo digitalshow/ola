@@ -52,6 +52,7 @@ class EnlightenmentDevice: public ola::Device {
     EnlightenmentDevice(class EnlightenmentPlugin *owner,
                         const string &name,
                         const string &device_serial,
+						const string &terminated_id,
                         DeviceMode device_mode);
     ~EnlightenmentDevice();
 
@@ -59,7 +60,7 @@ class EnlightenmentDevice: public ola::Device {
     inline char *InterfaceSerial() {
         return const_cast<char*>(m_device_serial.c_str());
     }
-    const string &InterfaceSerialStr() const { return m_device_serial; }
+    const string &InterfaceSerialStr() const { return m_terminated_device_serial; }
     unsigned int InterfaceVersion();
     int getFd() const { return m_fd; }
     EnlightenmentInputPort* getInputPort() const { return m_input; }
@@ -77,6 +78,7 @@ class EnlightenmentDevice: public ola::Device {
     EnlightenmentInputPort* m_input;
     EnlightenmentOutputPort* m_output;
     string m_device_serial;
+	string m_terminated_device_serial;
     DeviceMode m_device_mode;
     int m_fd;
 

@@ -43,12 +43,14 @@ using ola::Device;
 EnlightenmentDevice::EnlightenmentDevice(class EnlightenmentPlugin *owner,
                                          const string &name,
                                          const string &device_id,
+										 const string &terminated_id,
                                          DeviceMode device_mode
                                          )
   : Device(owner, name),
     m_input(NULL),
     m_output(NULL),
     m_device_serial(device_id),
+	m_terminated_device_serial(terminated_id),
     m_device_mode(device_mode),
     m_fd(ola::io::INVALID_DESCRIPTOR),
     m_allow_multiport_patching(true) { }

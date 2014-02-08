@@ -206,6 +206,7 @@ bool EnlightenmentPlugin::SetupDevices() {
                 this,
                 "Enlightenment [" + device_serial + "]",
                 interfaces[i],
+				device_serial,
                 static_cast<EnlightenmentDevice::DeviceMode>(m_device_mode));
     OLA_INFO << "new device : serial = " << device->InterfaceSerialStr()
              << " / version " << device->InterfaceVersion();
