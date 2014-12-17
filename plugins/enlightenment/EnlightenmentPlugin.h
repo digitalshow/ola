@@ -26,6 +26,8 @@
 #include <set>
 #include <string>
 
+using namespace std;
+
 namespace ola {
 namespace plugin {
 namespace enlightenment {

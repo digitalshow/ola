@@ -30,6 +30,8 @@ extern "C" {
 
 #include "plugins/enlightenment/EnlightenmentDevice.h"
 
+using namespace std;
+
 namespace ola {
 namespace plugin {
 namespace enlightenment {

@@ -42,6 +42,7 @@ extern "C" {
 #include "plugins/enlightenment/EnlightenmentPlugin.h"
 #include "plugins/enlightenment/EnlightenmentPort.h"
 
+using namespace std;
 
 static ola::thread::Mutex enlightenment_plugin_mutex;
 static std::set<ola::plugin::enlightenment::EnlightenmentPlugin*>

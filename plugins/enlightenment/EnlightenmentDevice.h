@@ -21,6 +21,8 @@
 #include <olad/Device.h>
 #include <string>
 
+using namespace std;
+
 namespace ola {
 namespace plugin {
 namespace enlightenment {
