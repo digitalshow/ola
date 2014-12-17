@@ -535,6 +535,23 @@ AS_IF([test "x$have_libusb_error_name" = xyes],
       [AC_DEFINE([HAVE_LIBUSB_ERROR_NAME], [1],
                  [define if libusb is installed and has libusb_error_name])])
 
+#libusbdmx
+AC_ARG_ENABLE(
+  [libusbdmx],
+  AS_HELP_STRING([--disable-libusbdmx], [Don't use libusbdmx even if it exists]))
+
+have_libusbdmx="no"
+
+if test "${enable_libusbdmx}" != "no"; then
+  PKG_CHECK_MODULES(libusbdmx, [libusbdmx >= 0.0], [have_libusbdmx="yes"], [true])
+fi
+AM_CONDITIONAL(HAVE_LIBUSBDMX, test "${have_libusbdmx}" = "yes")
+
+if test "${have_libusbdmx}" = "yes"; then
+# PLUGINS="${PLUGINS} enlightenment"
+ AC_DEFINE(HAVE_LIBUSBDMX, 1, [define if libusbdmx is installed])
+fi
+
 # UART direct plugin
 AC_ARG_ENABLE(
   [uart],
@@ -646,6 +663,7 @@ PLUGIN_SUPPORT(artnet, USE_ARTNET)
 PLUGIN_SUPPORT(dmx4linux, USE_DMX4LINUX, [$have_dmx4linux])
 PLUGIN_SUPPORT(dummy, USE_DUMMY)
 PLUGIN_SUPPORT(e131, USE_E131)
+PLUGIN_SUPPORT(enlightenment, HAVE_LIBUSBDMX)
 PLUGIN_SUPPORT(espnet, USE_ESPNET)
 PLUGIN_SUPPORT(ftdidmx, USE_FTDI, [$have_libftdi])
 PLUGIN_SUPPORT(gpio, USE_GPIO)
