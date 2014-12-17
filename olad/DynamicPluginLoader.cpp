@@ -115,6 +115,10 @@
 #include "plugins/dmx4linux/Dmx4LinuxPlugin.h"
 #endif
 
+#ifdef HAVE_LIBUSBDMX
+#include "plugins/enlightenment/EnlightenmentPlugin.h"
+#endif
+
 namespace ola {
 
 using std::vector;

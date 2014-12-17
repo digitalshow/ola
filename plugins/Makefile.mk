@@ -1,6 +1,7 @@
 
 include plugins/artnet/Makefile.mk
 include plugins/dummy/Makefile.mk
+include plugins/enlightenment/Makefile.mk
 include plugins/espnet/Makefile.mk
 include plugins/ftdidmx/Makefile.mk
 include plugins/gpio/Makefile.mk

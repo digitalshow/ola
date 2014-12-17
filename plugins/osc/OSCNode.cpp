@@ -28,11 +28,14 @@
 #include <ola/Logging.h>
 #include <ola/StringUtils.h>
 #include <ola/stl/STLUtils.h>
+#include <stdio.h>
 #include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
+
 #include "plugins/osc/OSCNode.h"
+
 
 namespace ola {
 namespace plugin {
@@ -476,6 +479,19 @@ uint16_t OSCNode::ListeningPort() const {
   return 0;
 }
 
+/**
+ * Return true when sending blobs, false when not
+ */
+bool OSCNode::UsingBlobData() const {
+  return m_osc_blob;
+}
+
+/**
+ * Return a cache containing the last transmitted/received values
+ */
+DmxBuffer& OSCNode::LastValueCache() {
+  return m_last_values;
+}
 
 /**
  * Called when the OSC FD is readable.

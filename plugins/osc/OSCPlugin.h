@@ -59,6 +59,7 @@ class OSCPlugin: public ola::Plugin {
     static const char DEFAULT_PORT_COUNT[];
     static const char DEFAULT_TARGETS_TEMPLATE[];
     static const char DEFAULT_UDP_PORT[];
+    static const char DEFAULT_OSC_BLOB[];
     static const char INPUT_PORT_COUNT_KEY[];
     static const char OUTPUT_PORT_COUNT_KEY[];
     static const char PLUGIN_NAME[];

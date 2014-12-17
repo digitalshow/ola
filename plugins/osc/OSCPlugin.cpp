@@ -42,6 +42,7 @@ const char OSCPlugin::DEFAULT_ADDRESS_TEMPLATE[] = "/dmx/universe/%d";
 const char OSCPlugin::DEFAULT_PORT_COUNT[] = "5";
 const char OSCPlugin::DEFAULT_TARGETS_TEMPLATE[] = "";
 const char OSCPlugin::DEFAULT_UDP_PORT[] = "7770";
+const char OSCPlugin::DEFAULT_OSC_BLOB[] = "true";
 const char OSCPlugin::INPUT_PORT_COUNT_KEY[] = "input_ports";
 const char OSCPlugin::OUTPUT_PORT_COUNT_KEY[] = "output_ports";
 const char OSCPlugin::PLUGIN_NAME[] = "OSC";
@@ -50,6 +51,7 @@ const char OSCPlugin::PORT_ADDRESS_TEMPLATE[] = "port_%d_address";
 const char OSCPlugin::PORT_TARGETS_TEMPLATE[] = "port_%d_targets";
 const char OSCPlugin::PORT_FORMAT_TEMPLATE[] = "port_%d_output_format";
 const char OSCPlugin::UDP_PORT_KEY[] = "udp_listen_port";
+const char OSCPlugin::OSC_BLOB_KEY[] = "use_osc_blobs";
 
 const char OSCPlugin::BLOB_FORMAT[] = "blob";
 const char OSCPlugin::FLOAT_ARRAY_FORMAT[] = "float_array";
@@ -65,6 +67,11 @@ bool OSCPlugin::StartHook() {
   uint16_t udp_port;
   if (!StringToInt(m_preferences->GetValue(UDP_PORT_KEY), &udp_port))
     StringToInt(DEFAULT_UDP_PORT, &udp_port);
+
+  // Get the value of OSC_BLOB_KEY or use the default value if it isn't valid.
+  bool osc_blob;
+  if (!StringToBool(m_preferences->GetValue(OSC_BLOB_KEY), &osc_blob))
+    StringToBool(DEFAULT_OSC_BLOB, &osc_blob);
 
   // For each input port, add the address to the vector
   vector<string> port_addresses;
@@ -128,7 +135,7 @@ string OSCPlugin::Description() const {
 "This plugin allows OLA to send and receive OSC\n"
 "( http://www.opensoundcontrol.org/ ) messages.\n"
 "\n"
-"OLA uses the blob type for transporting DMX data.\n"
+"OLA uses the blob type or float type for transporting DMX data.\n"
 "\n"
 "--- Config file : ola-osc.conf ---\n"
 "\n"
@@ -156,6 +163,10 @@ string OSCPlugin::Description() const {
 "\n"
 "udp_listen_port = <int>\n"
 "The UDP Port to listen on for OSC messages.\n"
+"\n"
+"use_osc_blobs = <bool>\n"
+"Select between sending and receiving fast blobs (true) or\n"
+"touchosc compatible float values (false).\n"
 "\n";
 }
 
@@ -180,6 +191,10 @@ bool OSCPlugin::SetDefaultPreferences() {
   save |= m_preferences->SetDefaultValue(UDP_PORT_KEY,
                                          UIntValidator(1, 0xffff),
                                          DEFAULT_UDP_PORT);
+
+  save |= m_preferences->SetDefaultValue(OSC_BLOB_KEY,
+                                         BoolValidator(),
+                                         DEFAULT_OSC_BLOB);
 
   for (unsigned int i = 0; i < GetPortCount(INPUT_PORT_COUNT_KEY); i++) {
     const string key = ExpandTemplate(PORT_ADDRESS_TEMPLATE, i);
