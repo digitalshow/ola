@@ -240,6 +240,11 @@ void DynamicPluginLoader::PopulatePlugins() {
   m_plugins.push_back(
       new ola::plugin::uartdmx::UartDmxPlugin(m_plugin_adaptor));
 #endif
+
+#ifdef HAVE_LIBUSBDMX
+  m_plugins.push_back(
+      new ola::plugin::enlightenment::EnlightenmentPlugin(m_plugin_adaptor));
+#endif
 }
 
 void DynamicPluginLoader::UnloadPlugins() {
