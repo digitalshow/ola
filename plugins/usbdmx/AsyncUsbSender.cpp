@@ -20,18 +20,23 @@
 
 #include "plugins/usbdmx/AsyncUsbSender.h"
 
+#include "libs/usb/LibUsbAdaptor.h"
 #include "ola/Logging.h"
-#include "plugins/usbdmx/LibUsbAdaptor.h"
 
 namespace ola {
 namespace plugin {
 namespace usbdmx {
+
+using ola::usb::LibUsbAdaptor;
 
 namespace {
 
 /*
  * Called by libusb when the transfer completes.
  */
+#ifdef _WIN32
+__attribute__((__stdcall__))
+#endif
 void AsyncCallback(struct libusb_transfer *transfer) {
   AsyncUsbSender *widget = reinterpret_cast<AsyncUsbSender*>(
       transfer->user_data);

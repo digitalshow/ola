@@ -84,7 +84,7 @@ class SimpleE133Monitor {
     ola::e133::MessageBuilder m_message_builder;
     ola::e133::DeviceManager m_device_manager;
 
-    void Input(char c);
+    void Input(int c);
 
     bool EndpointRequest(
         const IPV4Address &source,
@@ -122,7 +122,7 @@ void SimpleE133Monitor::AddIP(const IPV4Address &ip_address) {
   m_device_manager.AddDevice(ip_address);
 }
 
-void SimpleE133Monitor::Input(char c) {
+void SimpleE133Monitor::Input(int c) {
   switch (c) {
     case 'q':
       m_ss.Terminate();
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
   vector<IPV4Address> targets;
   if (!FLAGS_target_addresses.str().empty()) {
     vector<string> tokens;
-    ola::StringSplit(FLAGS_target_addresses, tokens, ",");
+    ola::StringSplit(FLAGS_target_addresses, &tokens, ",");
 
     vector<string>::const_iterator iter = tokens.begin();
     for (; iter != tokens.end(); ++iter) {

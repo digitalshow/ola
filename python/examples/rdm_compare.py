@@ -22,7 +22,6 @@ __author__ = 'nomis52@gmail.com (Simon Newton)'
 
 
 import getopt
-import logging
 import os
 import pickle
 import sys
@@ -31,20 +30,23 @@ import textwrap
 import webbrowser
 from ola.UID import UID
 
+
 class Error(Exception):
   """Base exception class."""
+
 
 class LoadException(Error):
   """Raised when we can't write to the output file."""
 
+
 def Usage():
-  print textwrap.dedent("""\
+  print(textwrap.dedent("""\
   Usage: rdm_compare.py <file1> <file2>
 
   Compare two RDM configurations saved with rdm_snapshot.
 
   Flags:
-    -h, --help    Display this help message and exit.""")
+    -h, --help    Display this help message and exit."""))
 
 
 def ReadFile(filename):
@@ -56,7 +58,7 @@ def ReadFile(filename):
   raw_data = pickle.load(f)
   f.close()
   data = {}
-  for uid, settings in raw_data.iteritems():
+  for uid, settings in raw_data.items():
     data[UID.FromString(uid)] = settings
   return data
 
@@ -77,7 +79,7 @@ def Diff(configuration1, configuration2):
   added = set()
   changed = []
   removed = set()
-  for uid, config1 in configuration1.iteritems():
+  for uid, config1 in configuration1.items():
     config2 = configuration2.get(uid)
     if config2 is None:
       removed.add(uid)
@@ -163,13 +165,13 @@ def DiffToStdout(configuration1, configuration2):
   """Diff the configurations and write to STDOUT."""
   added, changed, removed = Diff(configuration1, configuration2)
   for uid in added:
-    print 'Device %s was added' % uid
+    print('Device %s was added' % uid)
   for uid in removed:
-      print 'Device %s was removed' % uid
+    print('Device %s was removed' % uid)
 
   for uid, human_field, value1, value2 in changed:
-    print ('%s: %s changed from %s to %s' %
-           (uid, human_field, value1, value2))
+    print('%s: %s changed from %s to %s' %
+          (uid, human_field, value1, value2))
 
 
 def main():
@@ -178,8 +180,8 @@ def main():
         sys.argv[1:],
         'hb',
         ['help', 'browser'])
-  except getopt.GetoptError, err:
-    print str(err)
+  except getopt.GetoptError as err:
+    print(str(err))
     Usage()
     sys.exit(2)
 

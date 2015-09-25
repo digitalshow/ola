@@ -13,9 +13,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *  ola-recorder.cpp
- *  A simple tool to record & playback shows.
- *  Copyright (C) 2011 Simon Newton
+ * ola-recorder.cpp
+ * A simple tool to record & playback shows.
+ * Copyright (C) 2011 Simon Newton
  */
 
 #include <ola/Callback.h>
@@ -70,7 +70,7 @@ int RecordShow() {
 
   vector<string> universe_strs;
   vector<unsigned int> universes;
-  ola::StringSplit(FLAGS_universes.str(), universe_strs, ",");
+  ola::StringSplit(FLAGS_universes.str(), &universe_strs, ",");
   vector<string>::const_iterator iter = universe_strs.begin();
   for (; iter != universe_strs.end(); ++iter) {
     unsigned int universe;

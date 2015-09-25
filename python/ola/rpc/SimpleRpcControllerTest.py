@@ -23,6 +23,7 @@ __author__ = 'nomis52@gmail.com (Simon Newton)'
 import unittest
 from SimpleRpcController import SimpleRpcController
 
+
 class SimpleRpcControllerTest(unittest.TestCase):
 
   def setUp(self):
@@ -35,7 +36,7 @@ class SimpleRpcControllerTest(unittest.TestCase):
     controller = SimpleRpcController()
     self.assertFalse(controller.Failed())
     self.assertFalse(controller.IsCanceled())
-    self.assertEquals(None, controller.ErrorText())
+    self.assertEqual(None, controller.ErrorText())
     self.assertFalse(self.callback_run)
 
     # cancel
@@ -43,26 +44,26 @@ class SimpleRpcControllerTest(unittest.TestCase):
     controller.StartCancel()
     self.assertFalse(controller.Failed())
     self.assertFalse(not controller.IsCanceled())
-    self.assertEquals(None, controller.ErrorText())
+    self.assertEqual(None, controller.ErrorText())
     self.assertFalse(not self.callback_run)
 
     self.callback_run = False
     controller.Reset()
     self.assertFalse(controller.Failed())
     self.assertFalse(controller.IsCanceled())
-    self.assertEquals(None, controller.ErrorText())
+    self.assertEqual(None, controller.ErrorText())
 
     # fail
     failure_string = 'foo'
     controller.SetFailed(failure_string)
     self.assertFalse(not controller.Failed())
     self.assertFalse(controller.IsCanceled())
-    self.assertEquals(failure_string, controller.ErrorText())
+    self.assertEqual(failure_string, controller.ErrorText())
 
     controller.Reset()
     self.assertFalse(controller.Failed())
     self.assertFalse(controller.IsCanceled())
-    self.assertEquals(None, controller.ErrorText())
+    self.assertEqual(None, controller.ErrorText())
     self.assertFalse(self.callback_run)
 
 if __name__ == '__main__':

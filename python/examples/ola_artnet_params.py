@@ -23,16 +23,17 @@ __author__ = 'nomis52@gmail.com (Simon Newton)'
 from ola.ClientWrapper import ClientWrapper
 from ola import ArtNetConfigMessages_pb2
 
+
 def ArtNetConfigureReply(state, response):
   reply = ArtNetConfigMessages_pb2.Reply()
   reply.ParseFromString(response)
-  print 'Short Name: %s' % reply.options.short_name
-  print 'Long Name: %s' % reply.options.long_name
-  print 'Subnet: %d' % reply.options.subnet
+  print('Short Name: %s' % reply.options.short_name)
+  print('Long Name: %s' % reply.options.long_name)
+  print('Subnet: %d' % reply.options.subnet)
   wrapper.Stop()
 
 
-#Set this appropriately
+# Set this appropriately
 device_alias = 1
 wrapper = ClientWrapper()
 client = wrapper.Client()

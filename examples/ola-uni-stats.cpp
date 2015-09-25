@@ -13,9 +13,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *  ola-uni-stats.cpp
- *  Display some simple universe stats.
- *  Copyright (C) 2012 Simon Newton
+ * ola-uni-stats.cpp
+ * Display some simple universe stats.
+ * Copyright (C) 2012 Simon Newton
  */
 
 #include <errno.h>
@@ -66,7 +66,7 @@ class UniverseTracker {
     void ResetStats();
 
  protected:
-    void Input(char c);
+    void Input(int c);
 
  private:
     struct UniverseStats {
@@ -175,7 +175,7 @@ void UniverseTracker::ResetStats() {
   cout << "Reset counters" << endl;
 }
 
-void UniverseTracker::Input(char c) {
+void UniverseTracker::Input(int c) {
   switch (c) {
     case 'q':
       m_wrapper->GetSelectServer()->Terminate();

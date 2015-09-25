@@ -47,7 +47,7 @@ class FtdiDmxPlugin : public Plugin {
   // This plugin is disabled unless explicitly enabled by a user.
   bool DefaultMode() const { return false; }
 
-  void ConflictsWith(std::set<ola_plugin_id> *conflict_set) {
+  void ConflictsWith(std::set<ola_plugin_id> *conflict_set) const {
     conflict_set->insert(ola::OLA_PLUGIN_USBPRO);
     conflict_set->insert(ola::OLA_PLUGIN_OPENDMX);
   }
@@ -62,9 +62,9 @@ class FtdiDmxPlugin : public Plugin {
   bool StartHook();
   bool StopHook();
   bool SetDefaultPreferences();
-  unsigned int GetFrequency();
 
-  static const char DEFAULT_FREQUENCY[];
+  static const uint8_t DEFAULT_FREQUENCY = 30;
+
   static const char K_FREQUENCY[];
   static const char PLUGIN_NAME[];
   static const char PLUGIN_PREFIX[];

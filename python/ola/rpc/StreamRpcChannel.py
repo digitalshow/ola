@@ -22,8 +22,8 @@ __author__ = 'nomis52@gmail.com (Simon Newton)'
 import logging
 import struct
 from google.protobuf import service
-import Rpc_pb2
-from SimpleRpcController import SimpleRpcController
+from ola.rpc import Rpc_pb2
+from ola.rpc.SimpleRpcController import SimpleRpcController
 
 
 class OutstandingRequest(object):
@@ -50,7 +50,7 @@ class StreamRpcChannel(service.RpcChannel):
   SIZE_MASK = 0x0fffffff
   RECEIVE_BUFFER_SIZE = 8192
 
-  def __init__(self, socket, service_impl, close_callback = None):
+  def __init__(self, socket, service_impl, close_callback=None):
     """Create a new StreamRpcChannel.
 
     Args:
@@ -62,9 +62,9 @@ class StreamRpcChannel(service.RpcChannel):
     self._sequence = 0
     self._outstanding_requests = {}
     self._outstanding_responses = {}
-    self._buffer = [] # the received data
-    self._expected_size = None # the size of the message we're receiving
-    self._skip_message = False # skip the current message
+    self._buffer = []  # The received data
+    self._expected_size = None  # The size of the message we're receiving
+    self._skip_message = False  # Skip the current message
     self._close_callback = close_callback
 
   def SocketReady(self):
@@ -228,7 +228,7 @@ class StreamRpcChannel(service.RpcChannel):
         data.append(chunk)
         size_left -= len(chunk)
 
-    return ''.join(data)
+    return b''.join(data)
 
   def _ProcessIncomingData(self):
     """Process the received data."""
@@ -302,7 +302,6 @@ class StreamRpcChannel(service.RpcChannel):
     self._outstanding_requests[message.id] = request
     callback = lambda x: self.RequestComplete(request, x)
     self._service.CallMethod(method, request.controller, request_pb, callback)
-
 
   def _HandleResponse(self, message):
     """Handle a Response message.

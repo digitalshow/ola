@@ -31,6 +31,7 @@
 #include "ola/Callback.h"
 #include "ola/Logging.h"
 #include "ola/stl/STLUtils.h"
+#include "ola/strings/Format.h"
 #include "olad/PluginAdaptor.h"
 
 #include "plugins/usbdmx/AnymauDMX.h"
@@ -122,6 +123,12 @@ bool SyncPluginImpl::NewWidget(EurolitePro *widget) {
                         "eurolite-" + widget->SerialNumber()));
 }
 
+bool SyncPluginImpl::NewWidget(OLA_UNUSED ola::usb::JaRuleWidget *widget) {
+  // This should never happen since there is no Syncronous support for Ja Rule.
+  OLA_WARN << "::NewWidget called for a JaRuleWidget";
+  return false;
+}
+
 bool SyncPluginImpl::NewWidget(ScanlimeFadecandy *widget) {
   return StartAndRegisterDevice(
       widget,
@@ -165,8 +172,8 @@ bool SyncPluginImpl::CheckDevice(libusb_device *usb_device) {
   libusb_get_device_descriptor(usb_device, &device_descriptor);
 
   OLA_DEBUG << "USB device found, checking for widget support, vendor "
-            << IntToHexString(device_descriptor.idVendor) << ", product "
-            << IntToHexString(device_descriptor.idProduct);
+            << strings::ToHex(device_descriptor.idVendor) << ", product "
+            << strings::ToHex(device_descriptor.idProduct);
 
   pair<uint8_t, uint8_t> bus_dev_id(libusb_get_bus_number(usb_device),
                                     libusb_get_device_address(usb_device));
@@ -194,7 +201,8 @@ void SyncPluginImpl::ReScanForDevices() {
  * @param widget The widget that was added.
  * @param device The new olad device that uses this new widget.
  */
-bool SyncPluginImpl::StartAndRegisterDevice(Widget *widget, Device *device) {
+bool SyncPluginImpl::StartAndRegisterDevice(WidgetInterface *widget,
+                                            Device *device) {
   if (!device->Start()) {
     delete device;
     return false;

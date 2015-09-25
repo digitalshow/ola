@@ -122,15 +122,21 @@ test_scripts =
 # -----------------------------------------------------------------------------
 
 # Since `make install` relinks the libraries, this should be in the order in
-# which libraries depend on each other. e.g. common, plugins, server.
+# which libraries depend on each other. e.g. common, plugin_api, plugins, server.
 include common/Makefile.mk
 include data/Makefile.mk
 include debian/Makefile.mk
 include doxygen/Makefile.mk
 include examples/Makefile.mk
 include include/Makefile.mk
+include javascript/Makefile.mk
 include man/Makefile.mk
+include libs/Makefile.mk
 include ola/Makefile.mk
+# olad/plugin_api/Makefile.mk is included directly due to the order of
+# dependencies between them; we need to build olad/plugin_api, then the
+# plugins, then olad
+include olad/plugin_api/Makefile.mk
 include plugins/Makefile.mk
 include olad/Makefile.mk
 include protoc/Makefile.mk
@@ -152,6 +158,11 @@ install-exec-hook: $(INSTALL_EXEC_HOOKS)
 
 # -----------------------------------------------------------------------------
 
+# This gives us a rather hacky method to build the files normally built during
+# the build, so they are present for Doxygen to run against
+builtfiles : Makefile.am $(built_sources)
+.PHONY : builtfiles
+
 # I can't figure out how to safely execute a command (mvn) in a subdirectory,
 # so this is recursive for now.
 SUBDIRS = java
@@ -162,6 +173,15 @@ pkgconfig_DATA += libola.pc libolaserver.pc
 dvi:
 
 EXTRA_DIST += \
+  CONTRIBUTING \
+  Doxyfile \
+  GPL \
+  LGPL \
+  LICENCE \
+  README.debian \
+  README.developer \
+  README.mingw32 \
+  README.rpm \
   config/ac_prog_java_cc.m4 \
   config/ac_python_devel.m4 \
   config/ac_saleae.m4 \
@@ -173,53 +193,7 @@ EXTRA_DIST += \
   config/pkg.m4 \
   config/resolv.m4 \
   config/stl_hash.m4 \
-  CONTRIBUTING \
-  GPL \
-  LGPL \
-  LICENCE \
-  README.debian \
-  README.developer \
-  README.rpm ola.spec \
-  javascript/README \
-  javascript/ola/base_frame.js \
-  javascript/ola/common/dmx_constants.js \
-  javascript/ola/common/dmx_monitor.js \
-  javascript/ola/common/keypad_controller.js \
-  javascript/ola/common/keypad_parser.js \
-  javascript/ola/common/plugin_list.js \
-  javascript/ola/common/rdm_section_list.js \
-  javascript/ola/common/section_render.js \
-  javascript/ola/common/server.js \
-  javascript/ola/common/server_stats.js \
-  javascript/ola/common/sorted_list.js \
-  javascript/ola/common/uid_list.js \
-  javascript/ola/dialog.js \
-  javascript/ola/full/available_port_table.js \
-  javascript/ola/full/base_universe_tab.js \
-  javascript/ola/full/custom_dragger.js \
-  javascript/ola/full/custom_dragscrollsupport.js \
-  javascript/ola/full/dmx_console.js \
-  javascript/ola/full/dmx_console_tab.js \
-  javascript/ola/full/dmx_monitor_tab.js \
-  javascript/ola/full/plugin_frame.js \
-  javascript/ola/full/rdm_attributes_panel.js \
-  javascript/ola/full/rdm_patcher.js \
-  javascript/ola/full/rdm_patcher_tab.js \
-  javascript/ola/full/rdm_tab.js \
-  javascript/ola/full/universe_frame.js \
-  javascript/ola/full/universe_settings_tab.js \
-  javascript/ola/home_frame.js \
-  javascript/ola/logger.js \
-  javascript/ola/mobile.js \
-  javascript/ola/mobile/controller_tab.js \
-  javascript/ola/mobile/monitor_tab.js \
-  javascript/ola/mobile/plugin_tab.js \
-  javascript/ola/mobile/universe_tab.js \
-  javascript/ola/new_universe_frame.js \
-  javascript/ola/ola.js \
-  javascript/ola/port_table.js \
-  javascript/ola/universe_control.js \
-  javascript/ola/universe_item.js \
   mac_build.sh \
+  ola.spec \
   tests/recvdmx.py \
   tests/regression.py

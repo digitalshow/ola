@@ -63,7 +63,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(InterfacePickerTest);
  */
 void InterfacePickerTest::testGetInterfaces() {
   auto_ptr<InterfacePicker> picker(InterfacePicker::NewPicker());
-  vector<Interface> interfaces = picker->GetInterfaces(false);
+  vector<Interface> interfaces = picker->GetInterfaces(true);
   OLA_ASSERT_TRUE(interfaces.size() > 0);
 
   vector<Interface>::iterator iter;
@@ -109,6 +109,8 @@ void InterfacePickerTest::testChooseInterface() {
   // no interfaces
   Interface iface;
   OLA_ASSERT_FALSE(picker.ChooseInterface(&iface, ""));
+  // no interfaces, by index
+  OLA_ASSERT_FALSE(picker.ChooseInterface(&iface, 0));
 
   // now with one iface that doesn't match
   Interface iface1;

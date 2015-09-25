@@ -13,7 +13,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-# ResponderTestFixture.py
+# ResponderTest.py
 # Copyright (C) 2010 Simon Newton
 #
 # The test classes are broken down as follows:
@@ -36,7 +36,6 @@ from TestCategory import TestCategory
 from TestState import TestState
 from ola import PidStore
 from ola.OlaClient import OlaClient, RDMNack
-from ola.RDMAPI import RDMAPI
 
 
 class Error(Exception):
@@ -308,7 +307,7 @@ class ResponderTestFixture(TestFixture):
     """A helper method which returns an AckSetResult for the current PID."""
     return AckSetResult(self.pid.value, **kwargs)
 
-  def SendDiscovery(self, sub_device, pid, args = []):
+  def SendDiscovery(self, sub_device, pid, args=[]):
     """Send a raw Discovery request.
 
     Args:
@@ -318,7 +317,7 @@ class ResponderTestFixture(TestFixture):
     """
     return self.SendDirectedDiscovery(self._uid, sub_device, pid, args)
 
-  def SendDirectedDiscovery(self, uid, sub_device, pid, args = []):
+  def SendDirectedDiscovery(self, uid, sub_device, pid, args=[]):
     """Send a raw Discovery request.
 
     Args:
@@ -329,7 +328,7 @@ class ResponderTestFixture(TestFixture):
     """
     self.LogDebug(' DISCOVERY: uid: %s, pid: %s, sub device: %d, args: %s' %
                   (uid, pid, sub_device, args))
-    self._outstanding_request = (sub_device, PidStore.RDM_DISCOVERY, pid.value)
+    self._MakeRequestKey(sub_device, PidStore.RDM_DISCOVERY, pid.value)
     return self._api.Discovery(self._universe,
                                uid,
                                sub_device,
@@ -338,7 +337,7 @@ class ResponderTestFixture(TestFixture):
                                args)
 
 
-  def SendRawDiscovery(self, sub_device, pid, data = ""):
+  def SendRawDiscovery(self, sub_device, pid, data=""):
     """Send a raw Discovery request.
 
     Args:
@@ -348,7 +347,7 @@ class ResponderTestFixture(TestFixture):
     """
     self.LogDebug(' DISCOVERY: pid: %s, sub device: %d, data: %r' %
                   (pid, sub_device, data))
-    self._outstanding_request = (sub_device, PidStore.RDM_DISCOVERY, pid.value)
+    self._MakeRequestKey(sub_device, PidStore.RDM_DISCOVERY, pid.value)
     return self._api.RawDiscovery(self._universe,
                                   self._uid,
                                   sub_device,
@@ -356,7 +355,7 @@ class ResponderTestFixture(TestFixture):
                                   self._HandleResponse,
                                   data)
 
-  def SendGet(self, sub_device, pid, args = []):
+  def SendGet(self, sub_device, pid, args=[]):
     """Send a GET request using the RDM API.
 
     Args:
@@ -366,7 +365,7 @@ class ResponderTestFixture(TestFixture):
     """
     return self.SendDirectedGet(self._uid, sub_device, pid, args)
 
-  def SendDirectedGet(self, uid, sub_device, pid, args = []):
+  def SendDirectedGet(self, uid, sub_device, pid, args=[]):
     """Send a GET request using the RDM API.
 
     Args:
@@ -377,7 +376,7 @@ class ResponderTestFixture(TestFixture):
     """
     self.LogDebug(' GET: uid: %s, pid: %s, sub device: %d, args: %s' %
                   (uid, pid, sub_device, args))
-    self._outstanding_request = (sub_device, PidStore.RDM_GET, pid.value)
+    self._MakeRequestKey(sub_device, PidStore.RDM_GET, pid.value)
     ret_code = self._api.Get(self._universe,
                              uid,
                              sub_device,
@@ -386,7 +385,7 @@ class ResponderTestFixture(TestFixture):
                              args)
     return ret_code
 
-  def SendRawGet(self, sub_device, pid, data = ""):
+  def SendRawGet(self, sub_device, pid, data=""):
     """Send a raw GET request.
 
     Args:
@@ -396,7 +395,7 @@ class ResponderTestFixture(TestFixture):
     """
     self.LogDebug(' GET: uid: %s, pid: %s, sub device: %d, data: %r' %
                   (self._uid, pid, sub_device, data))
-    self._outstanding_request = (sub_device, PidStore.RDM_GET, pid.value)
+    self._MakeRequestKey(sub_device, PidStore.RDM_GET, pid.value)
     return self._api.RawGet(self._universe,
                             self._uid,
                             sub_device,
@@ -404,7 +403,7 @@ class ResponderTestFixture(TestFixture):
                             self._HandleResponse,
                             data)
 
-  def SendSet(self, sub_device, pid, args = []):
+  def SendSet(self, sub_device, pid, args=[]):
     """Send a SET request using the RDM API.
 
     Args:
@@ -414,7 +413,7 @@ class ResponderTestFixture(TestFixture):
     """
     return self.SendDirectedSet(self._uid, sub_device, pid, args)
 
-  def SendDirectedSet(self, uid, sub_device, pid, args = []):
+  def SendDirectedSet(self, uid, sub_device, pid, args=[]):
     """Send a SET request using the RDM API.
 
     Args:
@@ -425,7 +424,7 @@ class ResponderTestFixture(TestFixture):
     """
     self.LogDebug(' SET: uid: %s, pid: %s, sub device: %d, args: %s' %
                   (uid, pid, sub_device, self._EscapeData(args)))
-    self._outstanding_request = (sub_device, PidStore.RDM_SET, pid.value)
+    self._MakeRequestKey(sub_device, PidStore.RDM_SET, pid.value)
     ret_code = self._api.Set(self._universe,
                              uid,
                              sub_device,
@@ -436,7 +435,7 @@ class ResponderTestFixture(TestFixture):
       self.SleepAfterBroadcastSet()
     return ret_code
 
-  def SendRawSet(self, sub_device, pid, data = ""):
+  def SendRawSet(self, sub_device, pid, data=""):
     """Send a raw SET request.
 
     Args:
@@ -446,7 +445,7 @@ class ResponderTestFixture(TestFixture):
     """
     self.LogDebug(' SET: pid: %s, sub device: %d, data: %r' %
                   (pid, sub_device, data))
-    self._outstanding_request = (sub_device, PidStore.RDM_SET, pid.value)
+    self._MakeRequestKey(sub_device, PidStore.RDM_SET, pid.value)
     return self._api.RawSet(self._universe,
                             self._uid,
                             sub_device,
@@ -467,6 +466,13 @@ class ResponderTestFixture(TestFixture):
 
     self._PerformMatching(response, unpacked_data, unpack_exception)
 
+  def _MakeRequestKey(self, sub_device, command_class, pid):
+    # If the request was sent to the all-subdevice, the response should come
+    # from the root.
+    if sub_device == PidStore.ALL_SUB_DEVICES:
+      sub_device = PidStore.ROOT_DEVICE
+    self._outstanding_request = (sub_device, command_class, pid)
+
   def _HandleQueuedResponse(self, response, unpacked_data, unpack_exception):
     """Handle a response to a get QUEUED_MESSAGE request.
 
@@ -486,7 +492,7 @@ class ResponderTestFixture(TestFixture):
     # At this stage we have NACKs and ACKs left
     request_key = (response.sub_device, response.command_class, response.pid)
     if (self._outstanding_request == request_key):
-      # this is what we've been waiting for
+      # This is what we've been waiting for
       self._PerformMatching(response, unpacked_data, unpack_exception)
       return
 
@@ -502,13 +508,13 @@ class ResponderTestFixture(TestFixture):
         return
     elif (response.pid == status_messages_pid.value and
           unpacked_data.get('messages', None) == []):
-        # this means we've run out of messages
+        # This means we've run out of messages
         if self._state == TestState.NOT_RUN:
           self.SetFailed('ACK_TIMER issued but the response was never queued')
         self.Stop()
         return
 
-    # otherwise fetch the next one
+    # Otherwise fetch the next one
     self._GetQueuedMessage()
 
   def _CheckForAckOrNack(self, response, unpacked_data, unpack_exception):
@@ -519,7 +525,7 @@ class ResponderTestFixture(TestFixture):
       or a ACK_TIMER was received.
     """
     if not response.status.Succeeded():
-      # this indicates a transport error
+      # This indicates a transport error
       self.SetBroken(' Error: %s' % status.message)
       self.Stop()
       return False
@@ -528,13 +534,13 @@ class ResponderTestFixture(TestFixture):
       self.LogDebug(' Request status: %s' % response.ResponseCodeAsString())
       return True
 
-    # handle the case of an ack timer
+    # Handle the case of an ack timer
     if response.response_type == OlaClient.RDM_ACK_TIMER:
       self.LogDebug(' Received ACK TIMER set to %d ms' % response.ack_timer)
       self._wrapper.AddEvent(response.ack_timer, self._GetQueuedMessage)
       return False
 
-    # now log the result
+    # Now log the result
     if response.WasAcked():
       if unpack_exception:
         self.LogDebug(' Response: %s, PID: 0x%04hx, TN: %d, Error: %s' %
@@ -599,7 +605,7 @@ class ResponderTestFixture(TestFixture):
 
         return
 
-    # nothing matched
+    # Nothing matched
     self.SetFailed('expected one of:')
     for result in self._expected_results:
       self.LogDebug('  %s' % result)

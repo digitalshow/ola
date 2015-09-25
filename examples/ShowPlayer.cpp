@@ -13,9 +13,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *  ola-recorder.cpp
- *  A simple tool to record & playback shows.
- *  Copyright (C) 2011 Simon Newton
+ * ShowPlayer.cpp
+ * A simple show playback system.
+ * Copyright (C) 2011 Simon Newton
  *
  * The data file is in the form:
  * universe-number channel1,channel2,channel3
@@ -28,10 +28,10 @@
 #include <ola/Callback.h>
 #include <ola/DmxBuffer.h>
 #include <ola/Logging.h>
-#include <ola/OlaCallbackClient.h>
-#include <ola/OlaClientWrapper.h>
 #include <ola/StringUtils.h>
 #include <ola/base/SysExits.h>
+#include <ola/client/ClientWrapper.h>
+#include <ola/client/OlaClient.h>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -102,7 +102,8 @@ void ShowPlayer::SendNextFrame() {
   state = RegisterNextTimeout();
 
   OLA_INFO << "Universe: " << universe << ": " << buffer.ToString();
-  m_client.GetClient()->SendDmx(universe, buffer);
+  ola::client::SendDMXArgs args;
+  m_client.GetClient()->SendDMX(universe, buffer, args);
 
   switch (state) {
     case ShowLoader::END_OF_FILE:

@@ -55,6 +55,10 @@ class SyncronizedWidgetObserver : public WidgetObserver {
     return DispatchNewWidget(widget);
   }
 
+  bool NewWidget(ola::usb::JaRuleWidget *widget) {
+    return DispatchNewWidget(widget);
+  }
+
   bool NewWidget(class ScanlimeFadecandy *widget) {
     return DispatchNewWidget(widget);
   }
@@ -72,6 +76,10 @@ class SyncronizedWidgetObserver : public WidgetObserver {
   }
 
   void WidgetRemoved(class EurolitePro *widget) {
+    DispatchWidgetRemoved(widget);
+  }
+
+  void WidgetRemoved(ola::usb::JaRuleWidget *widget) {
     DispatchWidgetRemoved(widget);
   }
 

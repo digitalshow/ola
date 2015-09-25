@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * DmxThread.h
+ * UartDmxThread.h
  * The DMX through a UART plugin for ola
  * Copyright (C) 2011 Rui Barreiros
  * Copyright (C) 2014 Richard Ash
@@ -44,8 +44,8 @@ class UartDmxThread : public ola::thread::Thread {
   TimerGranularity m_granularity;
   UartWidget *m_widget;
   bool m_term;
-  int unsigned m_breakt;
-  int unsigned m_malft;
+  unsigned int m_breakt;
+  unsigned int m_malft;
   DmxBuffer m_buffer;
   ola::thread::Mutex m_term_mutex;
   ola::thread::Mutex m_buffer_mutex;

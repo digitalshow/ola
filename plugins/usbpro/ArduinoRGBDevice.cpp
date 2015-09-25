@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * ArduinoRGBDevice.h
+ * ArduinoRGBDevice.cpp
  * The Arduino RGB Mixer device.
  * Copyright (C) 2010 Simon Newton
  */
@@ -25,6 +25,7 @@
 #include "ola/Logging.h"
 #include "ola/StringUtils.h"
 #include "ola/io/SelectServerInterface.h"
+#include "ola/strings/Format.h"
 #include "plugins/usbpro/ArduinoRGBDevice.h"
 
 namespace ola {
@@ -71,7 +72,7 @@ ArduinoRGBOutputPort::ArduinoRGBOutputPort(ArduinoRGBDevice *parent,
       m_bucket(initial_count, rate, rate, *wake_time),
       m_wake_time(wake_time) {
   std::ostringstream str;
-  str << "Serial #: " << ola::IntToHexString(serial);
+  str << "Serial #: " << strings::ToHex(serial);
   m_description = str.str();
 }
 }  // namespace usbpro

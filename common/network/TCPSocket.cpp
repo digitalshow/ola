@@ -13,8 +13,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
- * Socket.cpp
- * Implementation of the Socket classes
+ * TCPSocket.cpp
+ * Implementation of the TCP Socket classes
  * Copyright (C) 2005 Simon Newton
  */
 
@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 #ifdef _WIN32
-#include <Winsock2.h>
+#include <ola/win/CleanWinSock2.h>
 #include <Ws2tcpip.h>
 #include <winioctl.h>
 #else
@@ -303,6 +303,8 @@ void TCPAcceptingSocket::PerformRead() {
     }
 
     if (m_factory) {
+      // The callback takes ownership of the new socket descriptor
+      // coverity[RESOURCE_LEAK]
       m_factory->NewTCPSocket(sd);
     } else {
       OLA_WARN << "Accepted new TCP Connection but no factory registered";

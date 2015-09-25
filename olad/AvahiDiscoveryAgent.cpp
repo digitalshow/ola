@@ -110,7 +110,7 @@ AvahiDiscoveryAgent::ServiceEntry::ServiceEntry(
       params(NULL),
       m_type_spec(type_spec) {
   vector<string> tokens;
-  StringSplit(type_spec, tokens, ",");
+  StringSplit(type_spec, &tokens, ",");
   m_type = tokens[0];
   if (tokens.size() > 1) {
     copy(tokens.begin() + 1, tokens.end(), std::back_inserter(m_sub_types));
@@ -246,8 +246,8 @@ void AvahiDiscoveryAgent::GroupStateChanged(const string &service_key,
   if (service->group != group) {
     if (service->group) {
       OLA_WARN << "Service group for " << service_key << " : "
-               << service->group
-               << " does not match callback group " << group;
+               << service->group << " does not match callback group "
+               << group;
     }
     return;
   }
@@ -262,7 +262,7 @@ void AvahiDiscoveryAgent::GroupStateChanged(const string &service_key,
       break;
     case AVAHI_ENTRY_GROUP_FAILURE:
       OLA_WARN << "Failed to register " << service_key
-               << avahi_strerror(avahi_client_errno(m_client));
+               << " " << avahi_strerror(avahi_client_errno(m_client));
       break;
     case AVAHI_ENTRY_GROUP_UNCOMMITED:
     case AVAHI_ENTRY_GROUP_REGISTERING:
@@ -428,7 +428,7 @@ void AvahiDiscoveryAgent::SetUpReconnectTimeout() {
 
 bool AvahiDiscoveryAgent::RenameAndRegister(ServiceEntry *service) {
   char *new_name_str =
-    avahi_alternative_service_name(service->actual_service_name.c_str());
+      avahi_alternative_service_name(service->actual_service_name.c_str());
   string new_name(new_name_str);
   avahi_free(new_name_str);
 

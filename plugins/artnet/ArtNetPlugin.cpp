@@ -37,8 +37,6 @@ using std::string;
 
 const char ArtNetPlugin::ARTNET_LONG_NAME[] = "OLA - ArtNet node";
 const char ArtNetPlugin::ARTNET_SHORT_NAME[] = "OLA - ArtNet node";
-const char ArtNetPlugin::ARTNET_NET[] = "0";
-const char ArtNetPlugin::ARTNET_SUBNET[] = "0";
 const char ArtNetPlugin::PLUGIN_NAME[] = "ArtNet";
 const char ArtNetPlugin::PLUGIN_PREFIX[] = "artnet";
 
@@ -150,8 +148,9 @@ string ArtNetPlugin::Description() const {
 bool ArtNetPlugin::SetDefaultPreferences() {
   bool save = false;
 
-  if (!m_preferences)
+  if (!m_preferences) {
     return false;
+  }
 
   save |= m_preferences->SetDefaultValue(ArtNetDevice::K_IP_KEY,
                                          StringValidator(true), "");
@@ -163,25 +162,27 @@ bool ArtNetPlugin::SetDefaultPreferences() {
                                          ARTNET_LONG_NAME);
   save |= m_preferences->SetDefaultValue(ArtNetDevice::K_NET_KEY,
                                          UIntValidator(0, 127),
-                                         ARTNET_NET);
+                                         ArtNetDevice::K_ARTNET_NET);
   save |= m_preferences->SetDefaultValue(ArtNetDevice::K_SUBNET_KEY,
                                          UIntValidator(0, 15),
-                                         ARTNET_SUBNET);
-  save |= m_preferences->SetDefaultValue(ArtNetDevice::K_OUTPUT_PORT_KEY,
-                                         UIntValidator(0, 16),
-                                         "4");
+                                         ArtNetDevice::K_ARTNET_SUBNET);
+  save |= m_preferences->SetDefaultValue(
+      ArtNetDevice::K_OUTPUT_PORT_KEY,
+      UIntValidator(0, 16),
+      ArtNetDevice::K_DEFAULT_OUTPUT_PORT_COUNT);
   save |= m_preferences->SetDefaultValue(ArtNetDevice::K_ALWAYS_BROADCAST_KEY,
                                          BoolValidator(),
-                                         BoolValidator::DISABLED);
+                                         false);
   save |= m_preferences->SetDefaultValue(ArtNetDevice::K_LIMITED_BROADCAST_KEY,
                                          BoolValidator(),
-                                         BoolValidator::DISABLED);
+                                         false);
   save |= m_preferences->SetDefaultValue(ArtNetDevice::K_LOOPBACK_KEY,
                                          BoolValidator(),
-                                         BoolValidator::DISABLED);
+                                         false);
 
-  if (save)
+  if (save) {
     m_preferences->Save();
+  }
 
   // check if this saved correctly
   // we don't want to use it if null
@@ -189,8 +190,9 @@ bool ArtNetPlugin::SetDefaultPreferences() {
       m_preferences->GetValue(ArtNetDevice::K_LONG_NAME_KEY).empty() ||
       m_preferences->GetValue(ArtNetDevice::K_SUBNET_KEY).empty() ||
       m_preferences->GetValue(ArtNetDevice::K_OUTPUT_PORT_KEY).empty() ||
-      m_preferences->GetValue(ArtNetDevice::K_NET_KEY).empty())
+      m_preferences->GetValue(ArtNetDevice::K_NET_KEY).empty()) {
     return false;
+  }
 
   return true;
 }

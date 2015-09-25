@@ -39,8 +39,16 @@ namespace shownet {
 using ola::DmxBuffer;
 using ola::network::HostToNetwork;
 using ola::network::NetworkToHost;
-using ola::testing::ASSERT_DATA_EQUALS;
 using std::string;
+
+namespace {
+
+// HostToLittleEndian is overloaded, so to avoid lots of casts we provide this
+// function.
+uint16_t ToLittleEndian(uint16_t value) {
+  return ola::network::HostToLittleEndian(value);
+}
+}  // namespace
 
 class ShowNetNodeTest: public CppUnit::TestFixture {
   CPPUNIT_TEST_SUITE(ShowNetNodeTest);
@@ -138,51 +146,54 @@ void ShowNetNodeTest::testHandlePacket() {
   OLA_ASSERT_EQ(0, m_handler_called);
 
   // add invalid indexBlocks
-  compressed_dmx->indexBlock[0] = 4;
+  compressed_dmx->indexBlock[0] = ToLittleEndian(4);
   OLA_ASSERT_EQ(false, m_node->HandlePacket(&packet, sizeof(packet)));
   OLA_ASSERT_EQ(0, m_handler_called);
 
   // invalid block length
-  compressed_dmx->indexBlock[0] = ShowNetNode::MAGIC_INDEX_OFFSET;
+  compressed_dmx->indexBlock[0] =
+      ToLittleEndian(ShowNetNode::MAGIC_INDEX_OFFSET);
   OLA_ASSERT_EQ(false, m_node->HandlePacket(&packet, sizeof(packet)));
   OLA_ASSERT_EQ(0, m_handler_called);
 
   // add a valid netslot
-  compressed_dmx->netSlot[0] = 1;  // universe 0
+  compressed_dmx->netSlot[0] = ToLittleEndian(1);  // universe 0
   OLA_ASSERT_EQ(false, m_node->HandlePacket(&packet, sizeof(packet)));
   OLA_ASSERT_EQ(0, m_handler_called);
 
   // valid block length, but not enough data
   unsigned int header_size = sizeof(packet) - sizeof(packet.data);
-  compressed_dmx->indexBlock[1] = ShowNetNode::MAGIC_INDEX_OFFSET;
+  compressed_dmx->indexBlock[1] =
+      ToLittleEndian(ShowNetNode::MAGIC_INDEX_OFFSET);
   OLA_ASSERT_EQ(false,
                 m_node->HandlePacket(&packet,
                 header_size + sizeof(ENCODED_DATA)));
   OLA_ASSERT_EQ(0, m_handler_called);
 
   // now do a block length larger than the packet
-  compressed_dmx->indexBlock[1] = 100 + ShowNetNode::MAGIC_INDEX_OFFSET;
+  compressed_dmx->indexBlock[1] = ToLittleEndian(
+      100 + ShowNetNode::MAGIC_INDEX_OFFSET);
   OLA_ASSERT_EQ(false,
       m_node->HandlePacket(&packet, header_size + sizeof(ENCODED_DATA)));
   OLA_ASSERT_EQ(0, m_handler_called);
 
   // test invalid slot size
-  compressed_dmx->indexBlock[1] = (ShowNetNode::MAGIC_INDEX_OFFSET +
-      sizeof(ENCODED_DATA));
+  compressed_dmx->indexBlock[1] = ToLittleEndian(
+      ShowNetNode::MAGIC_INDEX_OFFSET + sizeof(ENCODED_DATA));
 
   OLA_ASSERT_EQ(false,
       m_node->HandlePacket(&packet, header_size + sizeof(ENCODED_DATA)));
   OLA_ASSERT_EQ(0, m_handler_called);
 
   // check a valid packet, but different universe
-  compressed_dmx->netSlot[0] = 513;  // universe 1
-  compressed_dmx->slotSize[0] = sizeof(EXPECTED_DATA);
+  compressed_dmx->netSlot[0] = ToLittleEndian(513);  // universe 1
+  compressed_dmx->slotSize[0] = ToLittleEndian(sizeof(EXPECTED_DATA));
   OLA_ASSERT_EQ(false,
       m_node->HandlePacket(&packet, header_size + sizeof(ENCODED_DATA)));
   OLA_ASSERT_EQ(0, m_handler_called);
 
   // now check with the correct universe
-  compressed_dmx->netSlot[0] = 1;  // universe 0
+  compressed_dmx->netSlot[0] = ToLittleEndian(1);  // universe 0
   OLA_ASSERT_EQ(true,
       m_node->HandlePacket(&packet, header_size + sizeof(ENCODED_DATA)));
   OLA_ASSERT_EQ(1, m_handler_called);
@@ -219,8 +230,8 @@ void ShowNetNodeTest::testExtractPacket() {
   OLA_ASSERT_TRUE(m_node->HandlePacket(
       reinterpret_cast<const shownet_packet*>(packet1), sizeof(packet1)));
   OLA_ASSERT_EQ(1, m_handler_called);
-  ASSERT_DATA_EQUALS(__LINE__, expected_data1.GetRaw(), expected_data1.Size(),
-                     received_data.GetRaw(), received_data.Size());
+  OLA_ASSERT_DATA_EQUALS(expected_data1.GetRaw(), expected_data1.Size(),
+                         received_data.GetRaw(), received_data.Size());
 }
 
 /*
@@ -236,14 +247,14 @@ void ShowNetNodeTest::testPopulatePacket() {
   m_node->SetName(NAME);
 
   unsigned int size = m_node->BuildCompressedPacket(&packet, universe, buffer);
-  ASSERT_DATA_EQUALS(__LINE__, EXPECTED_PACKET, sizeof(EXPECTED_PACKET),
-                     reinterpret_cast<const uint8_t*>(&packet), size);
+  OLA_ASSERT_DATA_EQUALS(EXPECTED_PACKET, sizeof(EXPECTED_PACKET),
+                         reinterpret_cast<const uint8_t*>(&packet), size);
 
   // now send for a different universe
   universe = 1;
   size = m_node->BuildCompressedPacket(&packet, universe, buffer);
-  ASSERT_DATA_EQUALS(__LINE__, EXPECTED_PACKET2, sizeof(EXPECTED_PACKET2),
-                     reinterpret_cast<const uint8_t*>(&packet), size);
+  OLA_ASSERT_DATA_EQUALS(EXPECTED_PACKET2, sizeof(EXPECTED_PACKET2),
+                         reinterpret_cast<const uint8_t*>(&packet), size);
 }
 
 
