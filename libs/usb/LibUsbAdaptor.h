@@ -378,6 +378,13 @@ class LibUsbAdaptor {
   // Static helper methods.
 
   /**
+   * @brief Initialize a new libusb context.
+   * @param context A pointer to a libusb context.
+   * @returns true if the context is initialized, false otherwise.
+   */
+  static bool Initialize(struct libusb_context **context);
+
+  /**
    * @brief Fetch the manufacturer, product and serial strings from a device.
    * @param usb_device The USB device to get information for.
    * @param device_descriptor The descriptor to use
@@ -406,6 +413,13 @@ class LibUsbAdaptor {
    */
   static bool CheckProduct(const std::string &expected,
                            const DeviceInformation &device_info);
+
+  /**
+   * @brief Check if this platform supports hotplug.
+   * @returns true if hotplug is supported and enabled on this platform, false
+   *   otherwise.
+   */
+  static bool HotplugSupported();
 
   /**
    * @brief Try and convert an error code to a string

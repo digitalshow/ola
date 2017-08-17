@@ -22,6 +22,8 @@
 #define LIBS_USB_JARULECONSTANTS_H_
 
 #include <ola/Callback.h>
+#include <ola/io/ByteString.h>
+#include <ostream>
 
 namespace ola {
 namespace usb {
@@ -30,10 +32,9 @@ namespace usb {
  * @brief Ja Rule status flags.
  */
 typedef enum {
-  LOGS_PENDING_FLAG = 0x01,  //!< Log messages are pending
   FLAGS_CHANGED_FLAG = 0x02,  //!< Flags have changed
   MSG_TRUNCATED_FLAG = 0x04  //!< The message has been truncated.
-} StatusFlags;
+} JaRuleStatusFlags;
 
 /**
  * @brief Ja Rule Port modes.
@@ -41,7 +42,8 @@ typedef enum {
 typedef enum {
   CONTROLLER_MODE,  //!< DMX/RDM Controller mode
   RESPONDER_MODE,  //!< DMX/RDM Responder mode
-} PortMode;
+  SELF_TEST_MODE,  //!< Self test mode
+} JaRulePortMode;
 
 /**
  * @brief Indicates the eventual state of a Ja Rule command.
@@ -97,26 +99,59 @@ typedef enum {
  * @brief The Ja Rule command set.
  */
 typedef enum {
-  RESET_DEVICE = 0x00,
-  SET_MODE = 0x01,
-  GET_UID = 0x02,
-  SET_BREAK_TIME = 0x10,
-  GET_BREAK_TIME = 0x11,
-  SET_MAB_TIME = 0x12,
-  GET_MAB_TIME = 0x13,
-  SET_RDM_BROADCAST_LISTEN = 0x20,
-  GET_RDM_BROADCAST_LISTEN = 0x21,
-  SET_RDM_WAIT_TIME = 0x22,
-  GET_RDM_WAIT_TIME = 0x23,
-  TX_DMX = 0x30,
-  RDM_DUB = 0x40,
-  RDM_REQUEST = 0x41,
-  RDM_BROADCAST_REQUEST = 0x42,
-  ECHO_COMMAND = 0xf0,
-  GET_LOG = 0xf1,
-  GET_FLAGS = 0xf2,
-  WRITE_LOG = 0xf3,
+  JARULE_CMD_RESET_DEVICE = 0x00,
+  JARULE_CMD_SET_MODE = 0x01,
+  JARULE_CMD_GET_HARDWARE_INFO = 0x02,
+  JARULE_CMD_RUN_SELF_TEST = 0x03,
+  JARULE_CMD_SET_BREAK_TIME = 0x10,
+  JARULE_CMD_GET_BREAK_TIME = 0x11,
+  JARULE_CMD_SET_MARK_TIME = 0x12,
+  JARULE_CMD_GET_MARK_TIME = 0x13,
+  JARULE_CMD_SET_RDM_BROADCAST_TIMEOUT = 0x20,
+  JARULE_CMD_GET_RDM_BROADCAST_TIMEOUT = 0x21,
+  JARULE_CMD_SET_RDM_RESPONSE_TIMEOUT = 0x22,
+  JARULE_CMD_GET_RDM_RESPONSE_TIMEOUT = 0x23,
+  JARULE_CMD_SET_RDM_DUB_RESPONSE_LIMIT = 0x24,
+  JARULE_CMD_GET_RDM_DUB_RESPONSE_LIMIT = 0x25,
+  JARULE_CMD_SET_RDM_RESPONDER_DELAY = 0x26,
+  JARULE_CMD_GET_RDM_RESPONDER_DELAY = 0x27,
+  JARULE_CMD_SET_RDM_RESPONDER_JITTER = 0x28,
+  JARULE_CMD_GET_RDM_RESPONDER_JITTER = 0x29,
+  JARULE_CMD_TX_DMX = 0x30,
+  JARULE_CMD_RDM_DUB_REQUEST = 0x40,
+  JARULE_CMD_RDM_REQUEST = 0x41,
+  JARULE_CMD_RDM_BROADCAST_REQUEST = 0x42,
+
+  // Experimental / testing
+  JARULE_CMD_ECHO = 0xf0,
+  JARULE_CMD_GET_FLAGS = 0xf2,
 } CommandClass;
+
+/**
+ * @brief JaRule command return codes.
+ */
+typedef enum {
+  RC_OK,  //!< The command completed successfully.
+  RC_UNKNOWN,  //!< Unknown command
+  /**
+   * @brief The command could not be completed due to a full memory buffer
+   */
+  RC_BUFFER_FULL,
+  RC_BAD_PARAM,  //!< The command was malformed.
+  RC_TX_ERROR,  //!< There was an error during transceiver transmit.
+  RC_RDM_TIMEOUT,  //!< No RDM response was received.
+
+  /**
+   * @brief Data was received in response to a broadcast RDM command.
+   *
+   * This usually indicates a broken responder.
+   */
+  RC_RDM_BCAST_RESPONSE,
+  RC_RDM_INVALID_RESPONSE,  //!< An invalid RDM response was received.
+  RC_INVALID_MODE,  //!< The command is invalid in the current mode.
+
+  RC_LAST  //!< One past the last valid return code.
+} JaRuleReturnCode;
 
 /**
  * @brief A command completion callback.
@@ -128,8 +163,13 @@ typedef enum {
  * If the USBCommandResult is not COMMAND_COMPLETED_OK, the remaining values
  * are undefined.
  */
-typedef ola::BaseCallback4<void, USBCommandResult, uint8_t, uint8_t,
+typedef ola::BaseCallback4<void, USBCommandResult, JaRuleReturnCode, uint8_t,
                            const ola::io::ByteString&> CommandCompleteCallback;
+
+
+std::ostream& operator<<(std::ostream& os, const USBCommandResult &result);
+std::ostream& operator<<(std::ostream& os, const CommandClass &command_class);
+std::ostream& operator<<(std::ostream& os, const JaRuleReturnCode &rc);
 
 }  // namespace usb
 }  // namespace ola

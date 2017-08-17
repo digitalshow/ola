@@ -3,14 +3,36 @@
 if USE_LIBUSB
 noinst_LTLIBRARIES += plugins/usbdmx/libolausbdmxwidget.la
 
+# Plugin description is generated from README.md
+built_sources += plugins/usbdmx/UsbDmxPluginDescription.h
+nodist_plugins_usbdmx_libolausbdmx_la_SOURCES = \
+    plugins/usbdmx/UsbDmxPluginDescription.h
+plugins/usbdmx/UsbDmxPluginDescription.h: plugins/usbdmx/README.md plugins/usbdmx/Makefile.mk plugins/convert_README_to_header.sh
+	sh $(top_srcdir)/plugins/convert_README_to_header.sh $(top_srcdir)/plugins/usbdmx $(top_builddir)/plugins/usbdmx/UsbDmxPluginDescription.h
+
 plugins_usbdmx_libolausbdmxwidget_la_SOURCES = \
     plugins/usbdmx/AnymauDMX.cpp \
     plugins/usbdmx/AnymauDMX.h \
     plugins/usbdmx/AnymauDMXFactory.cpp \
     plugins/usbdmx/AnymauDMXFactory.h \
+    plugins/usbdmx/AVLdiyD512.cpp \
+    plugins/usbdmx/AVLdiyD512.h \
+    plugins/usbdmx/AVLdiyD512Factory.cpp \
+    plugins/usbdmx/AVLdiyD512Factory.h \
+    plugins/usbdmx/AsyncUsbReceiver.cpp \
+    plugins/usbdmx/AsyncUsbReceiver.h \
     plugins/usbdmx/AsyncUsbSender.cpp \
     plugins/usbdmx/AsyncUsbSender.h \
-    plugins/usbdmx/AsyncUsbSender.h \
+    plugins/usbdmx/AsyncUsbTransceiverBase.cpp \
+    plugins/usbdmx/AsyncUsbTransceiverBase.h \
+    plugins/usbdmx/DMXCProjectsNodleU1.cpp \
+    plugins/usbdmx/DMXCProjectsNodleU1.h \
+    plugins/usbdmx/DMXCProjectsNodleU1Factory.cpp \
+    plugins/usbdmx/DMXCProjectsNodleU1Factory.h \
+    plugins/usbdmx/DMXCreator512Basic.cpp \
+    plugins/usbdmx/DMXCreator512Basic.h \
+    plugins/usbdmx/DMXCreator512BasicFactory.cpp \
+    plugins/usbdmx/DMXCreator512BasicFactory.h \
     plugins/usbdmx/EurolitePro.cpp \
     plugins/usbdmx/EurolitePro.h \
     plugins/usbdmx/EuroliteProFactory.cpp \
@@ -23,6 +45,10 @@ plugins_usbdmx_libolausbdmxwidget_la_SOURCES = \
     plugins/usbdmx/ScanlimeFadecandy.h \
     plugins/usbdmx/ScanlimeFadecandyFactory.cpp \
     plugins/usbdmx/ScanlimeFadecandyFactory.h \
+    plugins/usbdmx/ShowJockeyDMXU1.cpp \
+    plugins/usbdmx/ShowJockeyDMXU1.h \
+    plugins/usbdmx/ShowJockeyDMXU1Factory.cpp \
+    plugins/usbdmx/ShowJockeyDMXU1Factory.h \
     plugins/usbdmx/Sunlite.cpp \
     plugins/usbdmx/Sunlite.h \
     plugins/usbdmx/SunliteFactory.cpp \
@@ -32,6 +58,8 @@ plugins_usbdmx_libolausbdmxwidget_la_SOURCES = \
     plugins/usbdmx/SunliteFirmwareLoader.h \
     plugins/usbdmx/SyncronizedWidgetObserver.cpp \
     plugins/usbdmx/SyncronizedWidgetObserver.h \
+    plugins/usbdmx/ThreadedUsbReceiver.cpp \
+    plugins/usbdmx/ThreadedUsbReceiver.h \
     plugins/usbdmx/ThreadedUsbSender.cpp \
     plugins/usbdmx/ThreadedUsbSender.h \
     plugins/usbdmx/VellemanK8062.cpp \
@@ -52,6 +80,10 @@ lib_LTLIBRARIES += plugins/usbdmx/libolausbdmx.la
 plugins_usbdmx_libolausbdmx_la_SOURCES = \
     plugins/usbdmx/AsyncPluginImpl.cpp \
     plugins/usbdmx/AsyncPluginImpl.h \
+    plugins/usbdmx/DMXCProjectsNodleU1Device.cpp \
+    plugins/usbdmx/DMXCProjectsNodleU1Device.h \
+    plugins/usbdmx/DMXCProjectsNodleU1Port.cpp \
+    plugins/usbdmx/DMXCProjectsNodleU1Port.h \
     plugins/usbdmx/GenericDevice.cpp \
     plugins/usbdmx/GenericDevice.h \
     plugins/usbdmx/GenericOutputPort.cpp \
@@ -71,4 +103,6 @@ plugins_usbdmx_libolausbdmx_la_LIBADD = \
     plugins/usbdmx/libolausbdmxwidget.la
 endif
 
-EXTRA_DIST += plugins/usbdmx/README.md
+EXTRA_DIST += \
+    plugins/usbdmx/README.md \
+    plugins/usbdmx/README.developer.md

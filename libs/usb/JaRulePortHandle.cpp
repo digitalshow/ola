@@ -40,6 +40,15 @@ JaRulePortHandle::JaRulePortHandle(class JaRuleWidgetPort *parent_port,
     m_queueing_controller(m_impl.get(), RDM_QUEUE_SIZE) {
 }
 
+JaRulePortHandle::~JaRulePortHandle() {
+  // Pause the queuing controller so it stops sending anything more to the
+  // impl.
+  m_queueing_controller.Pause();
+  // This will run any remaining callbacks.
+  m_impl.reset();
+  // m_queueing_controller will be destroyed next.
+}
+
 void JaRulePortHandle::SendRDMRequest(ola::rdm::RDMRequest *request,
                                       ola::rdm::RDMCallback *on_complete) {
   m_queueing_controller.SendRDMRequest(request, on_complete);
@@ -59,7 +68,7 @@ bool JaRulePortHandle::SendDMX(const DmxBuffer &buffer) {
   return m_impl->SendDMX(buffer);
 }
 
-bool JaRulePortHandle::SetPortMode(PortMode new_mode) {
+bool JaRulePortHandle::SetPortMode(JaRulePortMode new_mode) {
   return m_impl->SetPortMode(new_mode);
 }
 }  // namespace usb

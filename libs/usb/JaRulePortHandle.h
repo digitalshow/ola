@@ -46,6 +46,7 @@ class JaRulePortHandle : public ola::rdm::DiscoverableRDMControllerInterface {
   JaRulePortHandle(class JaRuleWidgetPort *parent_port,
                    const ola::rdm::UID &uid,
                    uint8_t physical_port);
+  ~JaRulePortHandle();
 
   void SendRDMRequest(ola::rdm::RDMRequest *request,
                       ola::rdm::RDMCallback *on_complete);
@@ -65,9 +66,10 @@ class JaRulePortHandle : public ola::rdm::DiscoverableRDMControllerInterface {
    * @todo I need to think about how to return errors from this since it's
    * async.
    */
-  bool SetPortMode(PortMode new_mode);
+  bool SetPortMode(JaRulePortMode new_mode);
 
  private:
+  // Order of destruction is important.
   std::auto_ptr<class JaRulePortHandleImpl> m_impl;
   ola::rdm::DiscoverableQueueingRDMController m_queueing_controller;
 

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -16,16 +15,15 @@
 # ModelCollector.py
 # Copyright (C) 2011 Simon Newton
 
+import logging
+from ola import PidStore, RDMConstants
+from ola.OlaClient import OlaClient, RDMNack
+from ola.RDMAPI import RDMAPI
+
 '''Quick script to collect information about responders.'''
 
 __author__ = 'nomis52@gmail.com (Simon Newton)'
 
-
-import logging
-import ola.RDMConstants
-from ola import PidStore
-from ola.OlaClient import OlaClient, RDMNack
-from ola.RDMAPI import RDMAPI
 
 DEFAULT_LANGUAGE = "en"
 
@@ -210,9 +208,10 @@ class ModelCollector(object):
     this_version = self._GetVersion()
     for param_info in data['params']:
       this_version['supported_parameters'].append(param_info['param_id'])
-      if (param_info['param_id'] >= ola.RDMConstants.RDM_MANUFACTURER_PID_MIN
-          and param_info['param_id'] <=
-            ola.RDMConstants.RDM_MANUFACTURER_PID_MAX):
+      if (param_info['param_id'] >=
+          RDMConstants.RDM_MANUFACTURER_PID_MIN and
+          param_info['param_id'] <=
+          RDMConstants.RDM_MANUFACTURER_PID_MAX):
         self.manufacturer_pids.append(param_info['param_id'])
     self._NextState()
 
@@ -240,6 +239,11 @@ class ModelCollector(object):
       'description': data['name'],
       'type': data['type'],
       'supports_recording': data['supports_recording'],
+      'range_min': data['range_min'],
+      'range_max': data['range_max'],
+      'normal_min': data['normal_min'],
+      'normal_max': data['normal_max'],
+      'unit': data['unit'],
     })
     self._FetchNextSensor()
 
@@ -507,7 +511,7 @@ class ModelCollector(object):
     if (response.response_type == OlaClient.RDM_NACK_REASON and
         response.pid != self.pid_store.GetName('SLOT_DESCRIPTION').value):
       print ('Got nack with reason for pid %s: %s' %
-          (response.pid, response.nack_reason))
+             (response.pid, response.nack_reason))
       self._NextState()
     elif unpack_exception:
       print unpack_exception

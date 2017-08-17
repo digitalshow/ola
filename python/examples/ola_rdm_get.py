@@ -18,9 +18,6 @@
 
 '''Get a PID from a UID.'''
 
-__author__ = 'nomis52@gmail.com (Simon Newton)'
-
-
 import cmd
 import getopt
 import os.path
@@ -32,6 +29,8 @@ from ola.ClientWrapper import ClientWrapper
 from ola.OlaClient import OlaClient, RDMNack
 from ola.RDMAPI import RDMAPI
 from ola.UID import UID
+
+__author__ = 'nomis52@gmail.com (Simon Newton)'
 
 
 def Usage():
@@ -48,6 +47,7 @@ def Usage():
     -p, --pid-location        the directory to read PID definitions from
     --uid                     the UID to send to
     -u, --universe <universe> Universe number."""))
+
 
 wrapper = None
 
@@ -112,7 +112,6 @@ class InteractiveModeController(cmd.Cmd):
     self._universe = universe
     self._uid = uid
     self._sub_device = sub_device
-
     self.pid_store = PidStore.GetStore(pid_location)
     self.wrapper = ClientWrapper()
     self.client = self.wrapper.Client()
@@ -269,7 +268,7 @@ class InteractiveModeController(cmd.Cmd):
 
     # now check if this type of request is supported
     pid_names = sorted([pid.name.lower() for pid in pids
-                 if pid.RequestSupported(request_type)])
+                        if pid.RequestSupported(request_type)])
 
     return pid_names
 
@@ -454,6 +453,13 @@ def main():
 
   if not uid and not list_pids and not interactive_mode:
     Usage()
+    sys.exit()
+
+  # try to load the PID store so we fail early if we're missing PIDs
+  try:
+    PidStore.GetStore(pid_location)
+  except PidStore.MissingPLASAPIDs as e:
+    print e
     sys.exit()
 
   controller = InteractiveModeController(universe,

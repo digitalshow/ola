@@ -30,7 +30,9 @@
 
 #include "libs/usb/LibUsbAdaptor.h"
 #include "ola/base/Macro.h"
+#include "olad/Preferences.h"
 #include "plugins/usbdmx/PluginImplInterface.h"
+#include "plugins/usbdmx/Widget.h"
 #include "plugins/usbdmx/WidgetFactory.h"
 
 namespace ola {
@@ -57,10 +59,12 @@ class SyncPluginImpl: public PluginImplInterface,  public WidgetObserver {
    * @param plugin The parent Plugin object which is used when creating
    * devices.
    * @param debug_level the debug level to use for libusb.
+   * @param preferences The Preferences container used by the plugin
    */
   SyncPluginImpl(PluginAdaptor *plugin_adaptor,
                  Plugin *plugin,
-                 unsigned int debug_level);
+                 unsigned int debug_level,
+                 Preferences *preferences);
 
   ~SyncPluginImpl();
 
@@ -68,16 +72,24 @@ class SyncPluginImpl: public PluginImplInterface,  public WidgetObserver {
   bool Stop();
 
   bool NewWidget(class AnymauDMX *widget);
+  bool NewWidget(class AVLdiyD512 *widget);
+  bool NewWidget(class DMXCProjectsNodleU1 *widget);
+  bool NewWidget(class DMXCreator512Basic *widget);
   bool NewWidget(class EurolitePro *widget);
   bool NewWidget(ola::usb::JaRuleWidget *widget);
   bool NewWidget(class ScanlimeFadecandy *widget);
+  bool NewWidget(class ShowJockeyDMXU1 *widget);
   bool NewWidget(class Sunlite *widget);
   bool NewWidget(class VellemanK8062 *widget);
 
   void WidgetRemoved(OLA_UNUSED class AnymauDMX *widget) {}
+  void WidgetRemoved(OLA_UNUSED class AVLdiyD512 *widget) {}
+  void WidgetRemoved(OLA_UNUSED class DMXCProjectsNodleU1 *widget) {}
+  void WidgetRemoved(OLA_UNUSED class DMXCreator512Basic *widget) {}
   void WidgetRemoved(OLA_UNUSED class EurolitePro *widget) {}
   void WidgetRemoved(OLA_UNUSED ola::usb::JaRuleWidget *widget) {}
   void WidgetRemoved(OLA_UNUSED class ScanlimeFadecandy *widget) {}
+  void WidgetRemoved(OLA_UNUSED class ShowJockeyDMXU1 *widget) {}
   void WidgetRemoved(OLA_UNUSED class Sunlite *widget) {}
   void WidgetRemoved(OLA_UNUSED class VellemanK8062 *widget) {}
 
@@ -89,6 +101,7 @@ class SyncPluginImpl: public PluginImplInterface,  public WidgetObserver {
   Plugin* const m_plugin;
   const unsigned int m_debug_level;
   ola::usb::SyncronousLibUsbAdaptor m_usb_adaptor;
+  Preferences* const m_preferences;
   WidgetFactories m_widget_factories;
 
   libusb_context *m_context;

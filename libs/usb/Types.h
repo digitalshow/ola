@@ -21,18 +21,23 @@
 #ifndef LIBS_USB_TYPES_H_
 #define LIBS_USB_TYPES_H_
 
-#include <utility>
+#include <stdint.h>
+#include <ostream>
 
 namespace ola {
 namespace usb {
 
-/**
- * @brief Represents a USB device on the bus
- * @tparam bus_address The bus number the device is connected to.
- * @tparam device_address The address of the device on the bus.
- */
-typedef std::pair<uint8_t, uint8_t> USBDeviceID;
+class USBDeviceID {
+ public:
+  USBDeviceID(uint8_t bus_number, uint8_t device_address);
 
+  const uint8_t bus_number;
+  const uint8_t device_address;
+
+  bool operator<(const USBDeviceID &id) const;
+
+  friend std::ostream& operator<<(std::ostream& os, const USBDeviceID &id);
+};
 }  // namespace usb
 }  // namespace ola
 
