@@ -668,8 +668,7 @@ fi
 AM_CONDITIONAL(HAVE_LIBUSBDMX, test "${have_libusbdmx}" = "yes")
 
 if test "${have_libusbdmx}" = "yes"; then
-# PLUGINS="${PLUGINS} enlightenment"
- AC_DEFINE(HAVE_LIBUSBDMX, 1, [define if libusbdmx is installed])
+  AC_DEFINE(HAVE_LIBUSBDMX, 1, [define if libusbdmx is installed])
 fi
 
 # UART direct plugin
@@ -836,7 +835,7 @@ PLUGIN_SUPPORT(artnet, USE_ARTNET)
 PLUGIN_SUPPORT(dmx4linux, USE_DMX4LINUX, [$have_dmx4linux])
 PLUGIN_SUPPORT(dummy, USE_DUMMY)
 PLUGIN_SUPPORT(e131, USE_E131)
-PLUGIN_SUPPORT(enlightenment, HAVE_LIBUSBDMX)
+PLUGIN_SUPPORT(enlightenment, USE_ENLIGHTENMENT, [$have_libusbdmx])
 PLUGIN_SUPPORT(espnet, USE_ESPNET)
 PLUGIN_SUPPORT(ftdidmx, USE_FTDI, [$have_libftdi])
 PLUGIN_SUPPORT(gpio, USE_GPIO)

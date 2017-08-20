@@ -76,6 +76,10 @@ if USE_FTDI
 olad_olad_LDADD += -lftdi -lusb
 endif
 
+if HAVE_LIBUSBDMX
+olad_olad_LDADD += -lusbdmx
+endif
+
 # TESTS
 ##################################################
 test_programs += \
